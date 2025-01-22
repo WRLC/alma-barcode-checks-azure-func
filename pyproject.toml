@@ -1,0 +1,15 @@
+[tool.poetry]
+name = "barcode-check-scf-duplicates-azure-func"
+package-mode = false
+
+[tool.poetry.dependencies]
+python = "^3.11"
+azure-functions = "^1.21.3"
+requests = "^2.32.3"
+jinja2 = "^3.1.5"
+python-dotenv = "^1.0.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
