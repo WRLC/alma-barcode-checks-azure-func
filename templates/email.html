@@ -1,18 +1,26 @@
 {% block content %}
-    <table>
+    <table border="1" style="text-align: left">
         <caption>{{ iz }} Duplicate Barcode Report</caption>
         <thead>
             <tr>
-                {% for column in columns %}
-                    <th>{{ column }}</th>
+                {% for column in column_keys %}
+                    {% if columns[column] != '0' %}
+                        <th>{{ columns[column] }}</th>
+                    {% endif %}
                 {% endfor %}
             </tr>
         </thead>
         <tbody>
             {% for row in rows %}
                 <tr>
-                    {% for cell in row %}
-                        <td>{{ cell }}</td>
+                    {% for column in column_keys %}
+                        {% if columns[column] != '0' %}
+                            {% if row[column] is defined %}
+                                <td>{{ row[column] }}</td>
+                            {% else %}
+                                <td></td>
+                            {% endif %}
+                        {% endif %}
                     {% endfor %}
                 </tr>
             {% endfor %}

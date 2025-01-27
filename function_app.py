@@ -8,6 +8,7 @@ import azure.functions as func
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import requests
+from requests.auth import HTTPBasicAuth
 
 load_dotenv()  # Load the environment variables
 
@@ -39,21 +40,23 @@ class Email:
 
         :return: None
         """
+        basic = HTTPBasicAuth(os.getenv('WEBHOOK_USER'), os.getenv('WEBHOOK_PASS'))
         try:
             response = requests.post(
-                url=os.getenv('MAIL_WEBHOOK_URL'),
+                url=os.getenv('WEBHOOK_URL'),
                 json={
                     "subject": self.subject,
                     "body": self.body,
                     "to": self.to,
                     "sender": self.sender
-                }
+                },
+                auth=basic
             )
         except requests.exceptions.RequestException as e:
             logging.error(f'Error: {e}')
             raise SystemExit(0)
 
-        if response.status_code != 200:
+        if response.status_code != 201:
             logging.error(f'Error: {response.status_code}: {response.text}')
             raise SystemExit(0)
 
@@ -72,18 +75,21 @@ def dupe_barcodes(dupebarcodes: func.TimerRequest) -> None:
     response = get_report()  # Get the report from Alma Analytics
 
     if response is None:  # If no response, exit
-        raise SystemExit(0)
+        logging.warning('No data returned by Alma Analytics')
+        return None
 
     rows = get_rows(response) if get_rows(response) else None  # Get the data rows
     columns = get_columns(response) if get_columns(response) else None  # Get the column headings
 
     if not rows or not columns:  # If no data, exit
-        raise SystemExit(0)
+        logging.warning('No data in report')
+        return None
 
     body = render_template(  # Build the email body
         'email.html',  # template
         rows=rows,  # rows
         columns=columns,  # columns
+        column_keys=list(columns.keys()),  # column keys
         iz=os.getenv('ANALYTICS_IZ').upper()  # IZ
     )
 
@@ -114,13 +120,13 @@ def get_report() -> requests.Response or None:
                 "region": os.getenv('ANALYTICS_REGION'),  # Region
             }
         )
-    except requests.exceptions.RequestException as e:  # Handle exceptions
-        logging.error(f'Error: {e}')  # Log the error
+    except requests.exceptions.RequestException:  # Handle exceptions
         return None  # Return None
 
     if response.status_code != 200:  # If not a 200 status code
-        logging.error(f'Error: {response.status_code}: {response.text}')  # Log the error
         return None  # Return None
+
+    logging.info(f'Report retrieved from {os.getenv("ANALYTICS_URL")}')  # Log the report retrieved
 
     return response
 
@@ -158,4 +164,5 @@ def render_template(template, **kwargs) -> str:
         autoescape=select_autoescape(['html', 'xml'])  # autoescape html and xml
     )
     template = env.get_template(template)  # get the template
+    logging.info(f'Email rendered')  # log the template rendered
     return template.render(**kwargs)  # render the template with the variables passed in
