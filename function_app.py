@@ -62,14 +62,14 @@ class Email:
 
 
 # noinspection PyUnusedLocal
-@app.function_name(name="dupebarcodes")
-@app.timer_trigger(schedule="0 0 6 1 * *", arg_name="dupebarcodes")
-def dupe_barcodes(dupebarcodes: func.TimerRequest) -> None:
+@app.function_name(name="emailreport")
+@app.timer_trigger(schedule="0 0 6 1 * *", arg_name="emailreport")
+def email_report(emailreport: func.TimerRequest) -> None:
     """
     This function is triggered by a timer trigger. It gets a report from Alma Analytics, extracts the data rows and
     column headings, builds an email body using a Jinja template, and sends the email
 
-    :param dupebarcodes: TimerRequest
+    :param emailreport: TimerRequest
     :return: None
     """
     response = get_report()  # Get the report from Alma Analytics
@@ -94,7 +94,7 @@ def dupe_barcodes(dupebarcodes: func.TimerRequest) -> None:
     )
 
     email = Email(  # Create the email object
-        subject=f"{os.getenv('ANALYTICS_IZ').upper()} Duplicate Barcode Report",  # subject
+        subject=f"{os.getenv('ANALYTICS_IZ').upper()} {os.getenv('ANALYTICS_REPORT_NAME')}",  # subject
         body=body,  # body
         to=os.getenv('EMAIL_TO'),  # recipient(s)
         sender=os.getenv('EMAIL_SENDER'),  # sender
@@ -113,7 +113,7 @@ def get_report() -> requests.Response or None:
     # Get the report from Alma Analytics
     try:
         response = requests.post(  # POST request with JSON payload
-            os.getenv('ANALYTICS_URL'),  # URL
+            os.getenv('ANALYTICS_JSON_URL'),  # URL
             json={
                 "path": os.getenv('ANALYTICS_PATH'),  # Path
                 "iz": os.getenv('ANALYTICS_IZ'),  # IZ
@@ -126,7 +126,7 @@ def get_report() -> requests.Response or None:
     if response.status_code != 200:  # If not a 200 status code
         return None  # Return None
 
-    logging.info(f'Report retrieved from {os.getenv("ANALYTICS_URL")}')  # Log the report retrieved
+    logging.info(f'{os.getenv("ANALYTICS_REPORT_NAME")} retrieved for {os.getenv("ANALYTICS_IZ")} IZ')  # Log report
 
     return response
 
