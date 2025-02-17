@@ -5,8 +5,8 @@ import logging
 import os
 from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-import requests
-from requests.auth import HTTPBasicAuth
+import requests  # type: ignore[import-untyped]
+from requests.auth import HTTPBasicAuth  # type:ignore[import-untyped]
 
 load_dotenv()
 
@@ -29,6 +29,14 @@ class Email:
         self.body = body
         self.to = to
         self.sender = sender
+
+    def __str__(self) -> str:
+        """
+        Return the email as a string
+
+        :return: str
+        """
+        return f"Subject: {self.subject}\n\n{self.body}"
 
     def send(self) -> None:
         """
@@ -59,15 +67,16 @@ class Email:
                     "to": self.to,
                     "sender": self.sender
                 },
+                timeout=10,
                 auth=basic
             )
 
         except requests.exceptions.RequestException as e:  # Handle request exceptions
-            logging.error(f'Error: {e}')  # If there is an error, log it
+            logging.error('Error: %s', e)  # If there is an error, log it
             raise  # If there is an error, raise it
 
         if response.status_code != 201:  # Check if the response status code is not 201
-            logging.error(f'Error: {response.status_code}: {response.text}')  # If not, log error
+            logging.error('Error: %s: %s', response.status_code, response.text)  # If not, log error
             raise requests.exceptions.RequestException(  # If not, raise an error
                 f'Error: {response.status_code}: {response.text}'
             )
@@ -93,21 +102,21 @@ def construct_email(response) -> Email | None:
         'email.html',  # template
         rows=rows,  # rows
         columns=columns,  # columns
-        column_keys=list(columns.keys()),  # column keys
+        column_keys=list(columns.keys()),  # type:ignore[union-attr] # column keys
         title=response.data['data']['report_name'].upper()  # IZ
     )
 
     email = Email(  # Create the email object
         subject=f"{response.data['data']['report_name']}",  # subject
         body=body,  # body
-        to=os.getenv('EMAIL_TO'),  # recipient(s)
-        sender=os.getenv('EMAIL_SENDER'),  # sender
+        to=os.getenv('EMAIL_TO'),  # type:ignore # recipient(s)
+        sender=os.getenv('EMAIL_SENDER'),  # type:ignore  # sender
     )
 
     return email
 
 
-def get_rows(response) -> list or None:
+def get_rows(response) -> list or None:  # type:ignore[valid-type]
     """
     Get the data rows from the report
 
@@ -117,7 +126,7 @@ def get_rows(response) -> list or None:
     return response.data['data']['rows']  # Get the data rows
 
 
-def get_columns(response) -> list or None:
+def get_columns(response) -> list or None:  # type:ignore[valid-type]
     """
     Get the column headings from the report
 
@@ -142,6 +151,6 @@ def render_template(template, **kwargs) -> str:
 
     template = env.get_template(template)  # get the template
 
-    logging.info(f'Email rendered')  # log the template rendered
+    logging.info('Email rendered')  # log the template rendered
 
     return template.render(**kwargs)  # render the template with the variables passed in

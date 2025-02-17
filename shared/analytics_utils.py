@@ -1,21 +1,21 @@
 """
 Shared utility functions for Alma Analytics
 """
-import json
 import logging
 import os
 import urllib.parse
+from typing import Any
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.secrets import SecretClient
-from bs4 import BeautifulSoup
-import requests
+from bs4 import BeautifulSoup  # type:ignore[import-untyped]
+import requests  # type:ignore[import-untyped]
 
 
-class Report:
+class Report:  # pylint: disable=too-few-public-methods
     """
     Report object
     """
-    def __init__(self, data: json) -> None:
+    def __init__(self, data: dict[str, Any]) -> None:
         """
         Report object
 
@@ -68,7 +68,7 @@ class ApiCall:
         return path
 
     # noinspection PyTypeChecker
-    def get_apikey(self) -> str:
+    def get_apikey(self) -> str | None:
         """
         Get the API key from the Azure Key Vault.
 
@@ -93,7 +93,7 @@ class ApiCall:
         payload_str = urllib.parse.urlencode(payload, safe=':%')
 
         try:  # Try to get the report from Alma
-            response = requests.get(self.build_path(), params=payload_str)  # Get the report from Alma
+            response = requests.get(self.build_path(), params=payload_str, timeout=60)  # Get the report from Alma
             response.raise_for_status()  # Check for HTTP errors
         except Exception as e:  # Handle exceptions
             logging.error(e)
@@ -115,7 +115,7 @@ def get_report(region: str, iz: str, report_path: str) -> Report | None:
     soup = BeautifulSoup(response.content, 'xml')  # Parse the XML response
 
     if soup.find('error'):  # Check for Alma errors
-        logging.warning(f'Error: {soup.find("error").text}')
+        logging.warning('Error: %s', soup.find('error').text)
         return None
 
     columnlist = soup.find_all('xsd:element')  # Get the columns from the XML response
