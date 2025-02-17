@@ -1,24 +1,24 @@
 {% block content %}
-    <table border="1" style="text-align: left">
-        <caption>{{ iz }} Duplicate Barcode Report</caption>
-        <thead>
-            <tr>
+    <div><strong>{{ title }}</strong></div>
+    <table style="text-align: left; border-collapse: collapse; width: 100%">
+        <thead style="vertical-align: top; border-top: 1px solid #000">
+            <tr style="padding: 5px; border-top: 1px solid #000; border-bottom: 1px solid #000">
                 {% for column in column_keys %}
                     {% if columns[column] != '0' %}
-                        <th>{{ columns[column] }}</th>
+                        <th scope="col" style="padding: 5px">{{ columns[column] }}</th>
                     {% endif %}
                 {% endfor %}
             </tr>
         </thead>
-        <tbody>
+        <tbody style="vertical-align: top">
             {% for row in rows %}
-                <tr>
+            <tr style="padding: 5px; text-align: left; border-bottom: 1px solid #333">
                     {% for column in column_keys %}
                         {% if columns[column] != '0' %}
                             {% if row[column] is defined %}
-                                <td>{{ row[column] }}</td>
+                                <td style="padding: 5px">{{ row[column] }}</td>
                             {% else %}
-                                <td></td>
+                                <td style="padding: 5px"></td>
                             {% endif %}
                         {% endif %}
                     {% endfor %}
