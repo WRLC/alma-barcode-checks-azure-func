@@ -1,3 +1,6 @@
+"""
+Duplicate Barcode Function
+"""
 import logging
 import os
 import azure.functions as func
@@ -16,7 +19,7 @@ frequency = os.getenv("DUPEBARCODES_CRON_FREQUENCY")  # Get the frequency from t
 # noinspection PyUnusedLocal
 @app.function_name(name="dupebarcodes")
 @app.timer_trigger(schedule="0 0 6 1 * *", run_on_startup=True, arg_name="dupebarcodes")
-def main(dupebarcodes: func.TimerRequest) -> None:
+def main(dupebarcodes: func.TimerRequest) -> None:  # type:ignore[unused-argument]  # pylint: disable=unused-argument
     """
     This function is triggered by a timer trigger. It gets a report from Alma Analytics, extracts the data rows and
     column headings, builds an email body using a Jinja template, and sends the email
@@ -37,9 +40,9 @@ def main(dupebarcodes: func.TimerRequest) -> None:
         raise ValueError("DUPEBARCODES_REPORT_PATH not set")  # Raise error if not set
 
     report = get_report(  # Get the report from Alma Analytics
-        os.getenv("DUPEBARCODES_REGION"),  # region
-        os.getenv("DUPEBARCODES_IZ"),  # IZ
-        os.getenv("DUPEBARCODES_REPORT_PATH")  # report path
+        os.getenv("DUPEBARCODES_REGION"),  # type:ignore[arg-type] # typing:ignore # region
+        os.getenv("DUPEBARCODES_IZ"),  # type:ignore[arg-type] # IZ
+        os.getenv("DUPEBARCODES_REPORT_PATH")  # type:ignore[arg-type] # report path
     )
 
     if not report:
