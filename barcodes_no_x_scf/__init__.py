@@ -18,7 +18,7 @@ frequency = os.getenv("BARCODESNOXSCF_CRON_FREQUENCY")  # Get the frequency from
 
 # noinspection PyUnusedLocal
 @app.function_name(name="barcodesnoxscf")
-@app.timer_trigger(schedule=frequency, run_on_startup=True, arg_name="barcodesnoxscf")  # type:ignore[arg-type]
+@app.timer_trigger(schedule=frequency, run_on_startup=False, arg_name="barcodesnoxscf")  # type:ignore[arg-type]
 def main(barcodesnoxscf: func.TimerRequest) -> None:  # type:ignore[unused-argument]  # pylint: disable=unused-argument
     """
     This function is triggered by a timer trigger. It gets a report from Alma Analytics, extracts the data rows and
