@@ -119,7 +119,7 @@ class ApiCall:
         return response
 
 
-# pylint: disable=too-many-arguments
+# pylint: disable=r0914
 def get_report(region: str, iz: str, report_path: str, report_name: str) -> Report | None:
     """
     Get the report from Alma Analytics

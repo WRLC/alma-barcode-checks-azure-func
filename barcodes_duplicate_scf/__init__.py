@@ -39,6 +39,18 @@ def main(dupebarcodes: func.TimerRequest) -> None:  # type:ignore[unused-argumen
         logging.error("DUPEBARCODES_REPORT_PATH not set")  # Log error if not set
         raise ValueError("DUPEBARCODES_REPORT_PATH not set")  # Raise error if not set
 
+    if not os.getenv("DUPEBARCODES_REPORT_NAME"):  # Check if report name is set
+        logging.error("DUPEBARCODES_REPORT_NAME not set")
+        raise ValueError("DUPEBARCODES_REPORT_NAME not set")
+
+    if not os.getenv("DUPEBARCODES_EMAIL_TO"):  # Check if email recipient is set
+        logging.error("DUPEBARCODES_EMAIL_TO not set")
+        raise ValueError("DUPEBARCODES_EMAIL_TO not set")
+
+    if not os.getenv("DUPEBARCODES_EMAIL_FROM"):  # Check if email sender is set
+        logging.error("DUPEBARCODES_EMAIL_FROM not set")
+        raise ValueError("DUPEBARCODES_EMAIL_FROM not set")
+
     report = get_report(  # Get the report from Alma Analytics
         os.getenv("DUPEBARCODES_REGION"),  # type:ignore[arg-type] # typing:ignore # region
         os.getenv("DUPEBARCODES_IZ"),  # type:ignore[arg-type] # IZ
@@ -49,7 +61,11 @@ def main(dupebarcodes: func.TimerRequest) -> None:  # type:ignore[unused-argumen
     if not report:
         return  # If the report is empty, return
 
-    email = construct_email(report)  # Construct the email
+    email = construct_email(  # Construct the email
+        report,
+        os.getenv("DUPEBARCODES_EMAIL_TO"),  # type:ignore[arg-type] # recipient(s)
+        os.getenv("DUPEBARCODES_EMAIL_FROM")  # type:ignore[arg-type] # sender
+    )
 
     if not email:
         return  # If the email is empty, return

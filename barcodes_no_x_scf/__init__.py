@@ -44,6 +44,14 @@ def main(barcodesnoxscf: func.TimerRequest) -> None:  # type:ignore[unused-argum
         logging.error("BARCODESNOXSCF_REPORT_NAME not set")
         raise ValueError("BARCODESNOXSCF_REPORT_NAME not set")
 
+    if not os.getenv("BARCODESNOXSCF_EMAIL_TO"):
+        logging.error("BARCODESNOXSCF_EMAIL_TO not set")
+        raise ValueError("BARCODESNOXSCF_EMAIL_TO not set")
+
+    if not os.getenv("BARCODESNOXSCF_EMAIL_FROM"):
+        logging.error("BARCODESNOXSCF_EMAIL_FROM not set")
+        raise ValueError("BARCODESNOXSCF_EMAIL_FROM not set")
+
     report = get_report(  # Get the report from Alma Analytics
         os.getenv("BARCODESNOXSCF_REGION"),  # type:ignore[arg-type] # region
         os.getenv("BARCODESNOXSCF_IZ"),  # type:ignore[arg-type] # IZ
@@ -56,7 +64,11 @@ def main(barcodesnoxscf: func.TimerRequest) -> None:  # type:ignore[unused-argum
 
     # report.fix_missing_x_scf()  # Fix the missing X SCF barcodes
 
-    email = construct_email(report)  # Construct the email
+    email = construct_email(  # Construct the email
+        report,  # response
+        os.getenv("BARCODESNOXSCF_EMAIL_TO"),  # type:ignore[arg-type] # recipient(s)
+        os.getenv("BARCODESNOXSCF_EMAIL_FROM")  # type:ignore[arg-type] # sender
+    )
 
     if not email:
         return  # If the email is empty, return
