@@ -24,6 +24,23 @@ class Report:  # pylint: disable=too-few-public-methods
         """
         self.data = data
 
+    def __str__(self) -> str:
+        """
+        Return the report as a string
+
+        :return: str
+        """
+        return f"{self.data}"
+
+    def fix_missing_x_scf(self) -> None:
+        """
+        Fix missing X SCF barcodes
+        :return: None
+        """
+        for row in self.data['data']['rows']:
+            if row['BARCODE']:
+                row['BARCODE'] = row['BARCODE'].replace('X', '')
+
 
 class ReportException(Exception):
     """
@@ -93,7 +110,7 @@ class ApiCall:
         payload_str = urllib.parse.urlencode(payload, safe=':%')
 
         try:  # Try to get the report from Alma
-            response = requests.get(self.build_path(), params=payload_str, timeout=60)  # Get the report from Alma
+            response = requests.get(self.build_path(), params=payload_str, timeout=120)  # Get the report from Alma
             response.raise_for_status()  # Check for HTTP errors
         except Exception as e:  # Handle exceptions
             logging.error(e)
@@ -102,7 +119,8 @@ class ApiCall:
         return response
 
 
-def get_report(region: str, iz: str, report_path: str) -> Report | None:
+# pylint: disable=r0914
+def get_report(region: str, iz: str, report_path: str, report_name: str) -> Report | None:
     """
     Get the report from Alma Analytics
 
@@ -148,7 +166,7 @@ def get_report(region: str, iz: str, report_path: str) -> Report | None:
             'status': 'success',
             'message': 'Report data retrieved',
             'data': {
-                'report_name': f'{iz.upper()} {os.getenv("DUPEBARCODES_REPORT_NAME")}',
+                'report_name': f'{iz.upper()} {report_name}',
                 'columns': columns,
                 'rows': rows
             }

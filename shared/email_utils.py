@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 import requests  # type: ignore[import-untyped]
 from requests.auth import HTTPBasicAuth  # type:ignore[import-untyped]
+from shared.analytics_utils import Report
 
 load_dotenv()
 
@@ -82,18 +83,15 @@ class Email:
             )
 
 
-def construct_email(response) -> Email | None:
+def construct_email(response: Report, email_to: str, email_from: str) -> Email | None:
     """
     Construct the email object
+
+    :param response: Report
+    :param email_to: str
+    :param email_from: str
+    :return: Email or None
     """
-    if not os.getenv('EMAIL_TO'):  # Check if to email address is set
-        logging.error('No email address provided')
-        raise ValueError('No to email address provided')  # If not, raise an error
-
-    if not os.getenv('EMAIL_SENDER'):  # Check if sender email address is set
-        logging.error('No email address provided')  # If not, log an error
-        raise ValueError('No sender email address provided')  # If not, raise an error
-
     rows = get_rows(response) if get_rows(response) else None  # Get the data rows
 
     columns = get_columns(response) if get_columns(response) else None  # Get the column headings
@@ -109,8 +107,8 @@ def construct_email(response) -> Email | None:
     email = Email(  # Create the email object
         subject=f"{response.data['data']['report_name']}",  # subject
         body=body,  # body
-        to=os.getenv('EMAIL_TO'),  # type:ignore # recipient(s)
-        sender=os.getenv('EMAIL_SENDER'),  # type:ignore  # sender
+        to=email_to,  # type:ignore # recipient(s)
+        sender=email_from,  # type:ignore  # sender
     )
 
     return email
