@@ -26,7 +26,7 @@ check_envs(envs)  # Check if the environment variables are set
 @app.function_name(name="dupebarcodes")
 @app.timer_trigger(
     schedule=os.getenv(envs['frequency']),  # type:ignore[arg-type]
-    run_on_startup=True,
+    run_on_startup=False,
     arg_name="dupebarcodes"
 )
 def main(dupebarcodes: func.TimerRequest) -> None:  # type:ignore[unused-argument]  # pylint: disable=unused-argument
