@@ -1,41 +1,33 @@
 """
-Email module
+Controller for the Email model
 """
 import logging
-import os
-from dotenv import load_dotenv
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from shared.report.models.report import Report
-from shared.email.models.email import Email
+from application.controllers.analysis_controller import get_report
+from application.models.analysis_sql import Analysis
+from application.models.email import Email
 
-load_dotenv()
 
-
-def construct_email(response: Report, envs: dict[str, str]) -> Email | None:
+def construct_email(analysis: Analysis) -> Email:
     """
     Construct the email object
 
-    :param response: Report
-    :param envs: dict[str, str]
+    :param analysis: Analysis
     :return: Email or None
     """
-    rows = get_rows(response) if get_rows(response) else None  # Get the data rows
-
-    columns = get_columns(response) if get_columns(response) else None  # Get the column headings
+    report = get_report(analysis)  # Get the report from Alma Analytics
 
     body = render_template(  # Build the email body
         'email.html',  # template
-        rows=rows,  # rows
-        columns=columns,  # columns
-        column_keys=list(columns.keys()),  # type:ignore[union-attr] # column keys
-        title=response.data['data']['report_name'].upper()  # IZ
+        rows=report.data['data']['rows'],  # rows
+        columns=report.data['data']['columns'],  # columns
+        column_keys=list(report.data['data']['columns'].keys()),  # type:ignore[union-attr] # column keys
+        title=report.data['data']['report_name'].upper()  # IZ
     )
 
     email = Email(  # Create the email object
-        subject=f"{response.data['data']['report_name']}",  # subject
-        body=body,  # body
-        to=os.getenv(envs['to']),  # type:ignore # recipient(s)
-        sender=os.getenv(envs['from']),  # type:ignore  # sender
+        subject=f"{report.data['data']['report_name']}",  # subject
+        body=body  # body
     )
 
     return email
@@ -70,7 +62,7 @@ def render_template(template, **kwargs) -> str:
     :return: str
     """
     env = Environment(  # create the environment
-        loader=FileSystemLoader('shared/templates'),  # load the templates from the templates directory
+        loader=FileSystemLoader('application/templates'),  # load the templates from the templates directory
         autoescape=select_autoescape(['html', 'xml'])  # autoescape html and xml
     )
 

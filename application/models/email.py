@@ -2,33 +2,25 @@
 Email model
 """
 import logging
-import os
-from dotenv import load_dotenv
 import requests  # type: ignore[import-untyped]
 from requests.auth import HTTPBasicAuth  # type:ignore[import-untyped]
-from shared import check_envs
-
-load_dotenv()
+from application.controllers.config_controller import get_config
 
 
 class Email:
     """
     Email object
     """
-    def __init__(self, subject: str, body: str, to: str, sender: str) -> None:
+    def __init__(self, subject: str, body: str) -> None:
         """
         Email object
 
         :param subject: str
         :param body: str
-        :param to: str
-        :param sender: str
         :return: None
         """
         self.subject = subject
         self.body = body
-        self.to = to
-        self.sender = sender
 
     def __str__(self) -> str:
         """
@@ -38,30 +30,23 @@ class Email:
         """
         return f"Subject: {self.subject}\n\n{self.body}"
 
-    def send(self) -> None:
+    def send(self, to: str) -> None:
         """
         Send the email to webhook
 
         :return: None
         """
-        envs = {  # List of environment variables to check
-            "url": "WEBHOOK_URL",  # webhook URL
-            "user": "WEBHOOK_USER",  # webhook user
-            "pass": "WEBHOOK_PASS"  # webhook password
-        }
 
-        check_envs(envs)  # Check if the environment variables are set
-
-        basic = HTTPBasicAuth(os.getenv(envs['user']), os.getenv(envs['pass']))  # Create the basic auth object
+        basic = HTTPBasicAuth(get_config('webhook_user'), get_config('webhook_pass'))  # Create the basic auth object
 
         try:  # Try to send the email
             response = requests.post(  # Send the email
-                url=os.getenv(envs['url']),
+                url=get_config('webhook_url'),
                 json={
                     "subject": self.subject,
                     "body": self.body,
-                    "to": self.to,
-                    "sender": self.sender
+                    "to": to,
+                    "sender": get_config('sender_email')
                 },
                 timeout=10,
                 auth=basic

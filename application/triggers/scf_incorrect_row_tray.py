@@ -3,9 +3,8 @@ Barcodes with incorrect row/tray in SCF
 """
 import os
 import azure.functions as func
-from shared import check_envs
-from shared.report import get_report
-from shared.email import construct_email
+from application.controllers.analysis_controller import get_report
+from application.controllers.email_controller import construct_email
 
 app = func.Blueprint()  # Create a Blueprint object
 
@@ -18,8 +17,6 @@ envs = {  # List of environment variables to check
     "name": "BARCODESINCORRECTROWTRAYSCF_REPORT_NAME",  # report name
     "to": "BARCODESINCORRECTROWTRAYSCF_EMAIL_TO"  # recipient(s)
 }
-
-check_envs(envs)  # Check if the environment variables are set
 
 
 # noinspection PyUnusedLocal
