@@ -10,7 +10,7 @@ from application.models.report import Report
 
 
 # pylint: disable=r0914
-def get_report(analysis: Analysis) -> Report | Exception | None:
+def get_report(analysis: Analysis) -> Report | bool | Exception | None:
     """
     Get the report from Alma Analytics
 
@@ -39,12 +39,14 @@ def get_report(analysis: Analysis) -> Report | Exception | None:
             'status': 'success',
             'message': 'Report data retrieved',
             'data': {
-                'report_name': analysis.iz.name.upper() + ' ' + analysis.trigger.name,
+                'report_name': analysis.iz.code.upper() + ' ' + analysis.trigger.name,
                 'columns': columns,
                 'rows': rows
             }
         }
     )
+
+    logging.debug('Report data compiled: %s', report.data['data']['report_name'])  # Log the success message
 
     return report  # Return the report
 
@@ -62,13 +64,15 @@ def get_soup(response) -> BeautifulSoup | Exception | None:
         return check_exception(soup)  # Return the error or None
 
     if soup.find('error'):  # Check for Alma errors
-        logging.warning('Error: %s', soup.find('error').text)
+        logging.error('Error: %s', soup.find('error').text)
         return ValueError(soup.find('error').text)
+
+    logging.debug('XML response parsed')  # Log the success message
 
     return soup
 
 
-def get_columns(soup: BeautifulSoup) -> dict[str, str] | Exception | None:  # type:ignore[valid-type]
+def get_columns(soup: BeautifulSoup) -> dict[str, str] | bool | Exception | None:  # type:ignore[valid-type]
     """
     Get the data rows from the report
 
@@ -88,10 +92,12 @@ def get_columns(soup: BeautifulSoup) -> dict[str, str] | Exception | None:  # ty
         if 'CASE  WHEN Provenance Code' in columns[column['name']]:  # If column is Provenance Code
             columns[column['name']] = 'Provenance Code'  # Change column name to Provenance Code
 
+    logging.debug('Columns retrieved')  # Log the success message
+
     return columns  # Return the dictionary of columns
 
 
-def get_rows(soup: BeautifulSoup) -> list | Exception | None:  # type:ignore[valid-type]
+def get_rows(soup: BeautifulSoup) -> list | bool | Exception | None:  # type:ignore[valid-type]
     """
     Get the data rows from the report
 
@@ -113,5 +119,7 @@ def get_rows(soup: BeautifulSoup) -> list | Exception | None:  # type:ignore[val
             values[kid.name] = kid.text  # Add the child to the dictionary
 
         rows.append(values)  # Add the dictionary to the list
+
+    logging.debug('Rows retrieved')  # Log the success message
 
     return rows  # Return the list of rows

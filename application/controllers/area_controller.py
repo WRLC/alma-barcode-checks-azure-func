@@ -26,4 +26,6 @@ def get_area_by_name(name: str) -> Area | Exception | None:
         logging.error('No area found: %s', e)  # log the error
         return e
 
+    logging.debug('Area retrieved: %s', name)  # Log success
+
     return area

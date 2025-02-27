@@ -5,17 +5,17 @@ import logging
 import sqlalchemy.exc
 
 from sqlalchemy import select
-from sqlalchemy.orm import Session, Mapped
+from sqlalchemy.orm import Session
 from application.extensions import engine
 from application.models.key_sql import Key
 
 
-def get_key(iz: int, area: Mapped[int], write: int) -> str | Exception | None:
+def get_key(iz: int, area: int, write: int) -> str | Exception | None:
     """
     Get the API key to retrieve the report
     """
-    if not iz or not area or not write:  # Check for empty values
-        logging.warning('Missing API key parameters')
+    if not iz or not area:  # Check for empty values
+        logging.error('Missing API key parameters')
         return None
 
     session = Session(engine)  # Create a Session object
@@ -33,5 +33,7 @@ def get_key(iz: int, area: Mapped[int], write: int) -> str | Exception | None:
     except sqlalchemy.exc.NoResultFound as e:  # Handle exceptions
         logging.error('No API key found: %s', e)  # log the error
         return e  # return the error
+
+    logging.debug('API key retrieved')  # Log success
 
     return apikey  # Return the API key

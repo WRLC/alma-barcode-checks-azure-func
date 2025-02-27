@@ -61,3 +61,5 @@ class Email:
             raise requests.exceptions.RequestException(  # If not, raise an error
                 f'Error: {response.status_code}: {response.text}'
             )
+
+        logging.info('Email sent to %s: %s', to, self.subject)

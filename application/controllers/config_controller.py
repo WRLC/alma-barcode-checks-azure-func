@@ -17,6 +17,10 @@ def get_config(key: str) -> str | Exception | None:
     :param key: The key to look up in the config table.
     :return: The config value.
     """
+    if not key:  # Check for empty values
+        logging.error('Missing config key parameter')
+        return None
+
     # Get the region from the database
     session = Session(engine)  # Create a Session object
 
@@ -27,5 +31,7 @@ def get_config(key: str) -> str | Exception | None:
     except sqlalchemy.exc.NoResultFound as e:  # Handle exceptions
         logging.error('Error: %s', e)  # log the error
         return e
+
+    logging.debug('Config retrieved: %s', key)  # Log success
 
     return config  # Return the region

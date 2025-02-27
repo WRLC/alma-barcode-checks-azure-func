@@ -12,7 +12,8 @@ class Trigger(Base):  # pylint: disable=too-few-public-methods
     """
     __tablename__ = "trigger"
     id: Mapped[int] = mapped_column(primary_key=True)  # Trigger ID
-    name: Mapped[str] = mapped_column(String(50))  # Trigger name
+    code: Mapped[str] = mapped_column(String(50))  # Trigger code
+    name: Mapped[str] = mapped_column(String(255))  # Trigger name
 
     analyses: Mapped[list["Analysis"]] = relationship(  # type:ignore[name-defined]
         back_populates="trigger",

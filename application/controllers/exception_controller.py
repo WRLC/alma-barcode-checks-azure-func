@@ -11,10 +11,10 @@ def check_exception(value: object) -> bool | Exception | None:
     :return: Exception or None
     """
     if not value:  # Check for empty values
-        logging.warning('No area found')
         return None
 
     if isinstance(value, Exception):  # Check for errors
+        logging.error('Error: %s', value)
         return value
 
     return True

@@ -9,7 +9,7 @@ from application.models.analysis_sql import Analysis
 from application.models.email import Email
 
 
-def construct_email(analysis: Analysis) -> Email | Exception | None:
+def construct_email(analysis: Analysis) -> Email | bool | Exception | None:
     """
     Construct the email object
 
@@ -24,10 +24,10 @@ def construct_email(analysis: Analysis) -> Email | Exception | None:
     try:
         body = render_template(  # Build the email body
             'email.html',  # template
-            rows=report.data['data']['rows'],  # rows
-            columns=report.data['data']['columns'],  # columns
+            rows=report.data['data']['rows'],  # type:ignore[union-attr]  # rows
+            columns=report.data['data']['columns'],  # type:ignore[union-attr]  # columns
             column_keys=list(report.data['data']['columns'].keys()),  # type:ignore[union-attr] # column keys
-            title=report.data['data']['report_name'].upper()  # IZ
+            title=report.data['data']['report_name'].upper()  # type:ignore[union-attr]  # IZ
         )
     except KeyError as e:  # Handle exceptions
         logging.error(e)
@@ -35,12 +35,14 @@ def construct_email(analysis: Analysis) -> Email | Exception | None:
 
     try:
         email = Email(  # Create the email object
-            subject=f"{report.data['data']['report_name']}",  # subject
+            subject=f"{report.data['data']['report_name']}",  # type:ignore[union-attr]  # subject
             body=body  # body
         )
     except KeyError as e:  # Handle exceptions
         logging.error(e)
         return KeyError(e)
+
+    logging.debug('Email constructed: %s', email.subject)  # Log the email constructed
 
     return email
 
@@ -60,6 +62,6 @@ def render_template(template, **kwargs) -> str:
 
     template = env.get_template(template)  # get the template
 
-    logging.info('Email rendered')  # log the template rendered
+    logging.debug('Email rendered')  # log the template rendered
 
     return template.render(**kwargs)  # render the template with the variables passed in

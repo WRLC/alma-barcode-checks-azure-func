@@ -19,11 +19,11 @@ def analysis_api_call(analysis: Analysis) -> requests.Response | Exception | Non
     :return: requests.Response
     """
     if not analysis:  # Check for empty values
-        logging.warning('No analysis found')
+        logging.error('No analysis found')
         return None
 
     if not analysis.path or not analysis.iz:  # Check if the analysis has a path
-        logging.warning('Missing analysis parameters for %s', analysis.trigger.name)
+        logging.error('Missing analysis parameters for %s', analysis.trigger.name)
         return ValueError('Missing analysis parameters for %s', analysis.trigger.name)
 
     area = get_area_by_name('analytics')  # Get the area from the database
@@ -33,7 +33,7 @@ def analysis_api_call(analysis: Analysis) -> requests.Response | Exception | Non
 
     iz = analysis.iz  # Get the IZ from the analysis
 
-    apikey = get_key(iz.id, area.id, 0)  # Get the API key
+    apikey = get_key(iz.id, area.id, 0)  # type:ignore[union-attr]  # Get the API key
 
     if not check_exception(apikey) or isinstance(check_exception(apikey), Exception):  # Check for empty or errors
         return check_exception(apikey)  # Return the error or None
@@ -53,10 +53,12 @@ def analysis_api_call(analysis: Analysis) -> requests.Response | Exception | Non
         logging.error(e)
         return e
 
+    logging.info('API call succeeded: %s %s', analysis.iz.code, analysis.trigger.name)  # Log success
+
     return response
 
 
-def build_path() -> str | Exception | None:
+def build_path() -> str | bool | Exception | None:
     """
     Build the API path.
 
