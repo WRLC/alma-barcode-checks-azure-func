@@ -3,12 +3,13 @@ Controller for the Email model
 """
 import logging
 from jinja2 import Environment, FileSystemLoader, select_autoescape
-from application.controllers.analysis_controller import get_report
+from application.controllers.exception_controller import check_exception
+from application.controllers.report_controller import get_report
 from application.models.analysis_sql import Analysis
 from application.models.email import Email
 
 
-def construct_email(analysis: Analysis) -> Email:
+def construct_email(analysis: Analysis) -> Email | Exception | None:
     """
     Construct the email object
 
@@ -17,40 +18,31 @@ def construct_email(analysis: Analysis) -> Email:
     """
     report = get_report(analysis)  # Get the report from Alma Analytics
 
-    body = render_template(  # Build the email body
-        'email.html',  # template
-        rows=report.data['data']['rows'],  # rows
-        columns=report.data['data']['columns'],  # columns
-        column_keys=list(report.data['data']['columns'].keys()),  # type:ignore[union-attr] # column keys
-        title=report.data['data']['report_name'].upper()  # IZ
-    )
+    if not check_exception(report) or isinstance(check_exception(report), Exception):  # Check for empty or errors
+        return check_exception(report)  # Return the error or None
 
-    email = Email(  # Create the email object
-        subject=f"{report.data['data']['report_name']}",  # subject
-        body=body  # body
-    )
+    try:
+        body = render_template(  # Build the email body
+            'email.html',  # template
+            rows=report.data['data']['rows'],  # rows
+            columns=report.data['data']['columns'],  # columns
+            column_keys=list(report.data['data']['columns'].keys()),  # type:ignore[union-attr] # column keys
+            title=report.data['data']['report_name'].upper()  # IZ
+        )
+    except KeyError as e:  # Handle exceptions
+        logging.error(e)
+        return KeyError(e)
+
+    try:
+        email = Email(  # Create the email object
+            subject=f"{report.data['data']['report_name']}",  # subject
+            body=body  # body
+        )
+    except KeyError as e:  # Handle exceptions
+        logging.error(e)
+        return KeyError(e)
 
     return email
-
-
-def get_rows(response) -> list or None:  # type:ignore[valid-type]
-    """
-    Get the data rows from the report
-
-    :param response: requests.Response
-    :return: list or None
-    """
-    return response.data['data']['rows']  # Get the data rows
-
-
-def get_columns(response) -> list or None:  # type:ignore[valid-type]
-    """
-    Get the column headings from the report
-
-    :param response: requests.Response
-    :return: list or None
-    """
-    return response.data['data']['columns']  # Get the column headings
 
 
 def render_template(template, **kwargs) -> str:
