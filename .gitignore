@@ -51,3 +51,4 @@ __azurite_db*__.json
 
 # local database
 *.db
+*.sql
