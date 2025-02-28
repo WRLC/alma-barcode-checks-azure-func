@@ -3,12 +3,12 @@ Barcodes with No X in SCF
 """
 import logging
 import azure.functions as func
-from sqlalchemy.orm import sessionmaker, scoped_session
+from sqlalchemy.orm import scoped_session
 from application.controllers.analysis_controller import get_trigger_analyses
 from application.controllers.email_controller import send_emails
 from application.controllers.exception_controller import check_exception
 from application.controllers.report_controller import get_report
-from application.extensions import engine
+from application.extensions import session_factory
 
 app = func.Blueprint()  # Create a Blueprint object
 
@@ -26,7 +26,6 @@ def main(scfnox: func.TimerRequest) -> None:  # type:ignore[unused-argument]  # 
     :param scfnox: TimerRequest
     :return: None
     """
-    session_factory = sessionmaker(engine)  # Create a session factory
     session = scoped_session(session_factory)  # Create a session
 
     code = 'scf_no_x'  # Trigger code
