@@ -50,4 +50,4 @@ def main(scfduplicate: func.TimerRequest) -> None:  # type:ignore[unused-argumen
 
         send_emails(report, analysis, session)  # type:ignore[arg-type]  # Send the report as email
 
-    session.remove()
+    session.remove()  # Remove the session

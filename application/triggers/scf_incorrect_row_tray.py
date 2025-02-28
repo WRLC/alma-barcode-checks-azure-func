@@ -26,8 +26,8 @@ def main(scfincorrectrowtray: func.TimerRequest) -> None:  # type:ignore  # pyli
     :param scfincorrectrowtray: TimerRequest
     :return: None
     """
-    session_factory = sessionmaker(engine)
-    session = scoped_session(session_factory)
+    session_factory = sessionmaker(engine)  # Create a session factory
+    session = scoped_session(session_factory)  # Create a session
 
     code = 'scf_no_incorrect_tray'  # Trigger code
 
@@ -49,4 +49,4 @@ def main(scfincorrectrowtray: func.TimerRequest) -> None:  # type:ignore  # pyli
 
         send_emails(report, analysis, session)  # type:ignore[arg-type]  # Send the report as email
 
-    session.remove()
+    session.remove()  # Remove the session
