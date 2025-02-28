@@ -16,17 +16,17 @@ class Iz(Base):  # pylint: disable=too-few-public-methods
     name: Mapped[str] = mapped_column(String(50))  # IZ name
     code: Mapped[str] = mapped_column(String(50))  # IZ code
 
-    keys: Mapped[list["Key"]] = relationship(  # type:ignore[name-defined]
+    keys: Mapped[list["Key"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
         back_populates="iz",
         cascade="all, delete-orphan",
     )
 
-    analyses: Mapped[list["Analysis"]] = relationship(  # type:ignore[name-defined]
+    analyses: Mapped[list["Analysis"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
         back_populates="iz",
         cascade="all, delete-orphan",
     )
 
-    users: Mapped[list["User"]] = relationship(  # type:ignore[name-defined]
+    users: Mapped[list["User"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
         back_populates="iz",
         cascade="all, delete-orphan",
     )

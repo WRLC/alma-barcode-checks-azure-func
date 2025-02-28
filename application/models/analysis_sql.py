@@ -17,10 +17,10 @@ class Analysis(Base):  # pylint: disable=too-few-public-methods
     trigger_id: Mapped[int] = mapped_column(ForeignKey("trigger.id"))  # Trigger ID
     iz_id: Mapped[int] = mapped_column(ForeignKey("iz.id"))  # IZ ID
 
-    trigger: Mapped["Trigger"] = relationship(back_populates="analyses")  # type:ignore[name-defined]
-    iz: Mapped["Iz"] = relationship(back_populates="analyses")  # type:ignore[name-defined]
+    trigger: Mapped["Trigger"] = relationship(back_populates="analyses")  # type:ignore[name-defined]  # noqa: F821
+    iz: Mapped["Iz"] = relationship(back_populates="analyses")  # type:ignore[name-defined]  # noqa: F821
 
-    recipients: Mapped[list["Recipient"]] = relationship(  # type:ignore[name-defined]
+    recipients: Mapped[list["Recipient"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
         back_populates="analysis",
         cascade="all, delete-orphan",
     )

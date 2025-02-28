@@ -15,7 +15,7 @@ class Trigger(Base):  # pylint: disable=too-few-public-methods
     code: Mapped[str] = mapped_column(String(50))  # Trigger code
     name: Mapped[str] = mapped_column(String(255))  # Trigger name
 
-    analyses: Mapped[list["Analysis"]] = relationship(  # type:ignore[name-defined]
+    analyses: Mapped[list["Analysis"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
         back_populates="trigger",
         cascade="all, delete-orphan",
     )

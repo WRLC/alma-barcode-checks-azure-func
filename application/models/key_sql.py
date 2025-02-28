@@ -18,8 +18,8 @@ class Key(Base):  # pylint: disable=too-few-public-methods
     area_id: Mapped[int] = mapped_column(ForeignKey("area.id"))  # Area ID
     iz_id: Mapped[int] = mapped_column(ForeignKey("iz.id"))  # IZ ID
 
-    iz: Mapped["Iz"] = relationship(back_populates="keys")  # type:ignore[name-defined]
-    area: Mapped["Area"] = relationship(back_populates="keys")  # type:ignore[name-defined]
+    iz: Mapped["Iz"] = relationship(back_populates="keys")  # type:ignore[name-defined]  # noqa: F821
+    area: Mapped["Area"] = relationship(back_populates="keys")  # type:ignore[name-defined]  # noqa: F821
 
     def __repr__(self) -> str:
         return f"Key(id={self.id!r})"

@@ -16,9 +16,9 @@ class User(Base):  # pylint: disable=too-few-public-methods
     email: Mapped[str] = mapped_column(String(50))  # Username
     iz_id: Mapped[str] = mapped_column(ForeignKey("iz.id"))  # IZ ID
 
-    iz: Mapped["Iz"] = relationship(back_populates="users")  # type:ignore[name-defined]
+    iz: Mapped["Iz"] = relationship(back_populates="users")  # type:ignore[name-defined]  # noqa: F821
 
-    recipients: Mapped[list["Recipient"]] = relationship(  # type:ignore[name-defined]
+    recipients: Mapped[list["Recipient"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
         back_populates="user",
         cascade="all, delete-orphan",
     )

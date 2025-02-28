@@ -15,13 +15,13 @@ from application import iz_no_row_tray
 from application import iz_incorrect_row_tray
 
 # import db models
-from application.models.analysis_sql import Analysis  # pylint: disable=unused-import
-from application.models.area_sql import Area  # pylint: disable=unused-import
-from application.models.iz_sql import Iz  # pylint: disable=unused-import
-from application.models.key_sql import Key  # pylint: disable=unused-import
-from application.models.recipient_sql import Recipient  # pylint: disable=unused-import
-from application.models.trigger_sql import Trigger  # pylint: disable=unused-import
-from application.models.user_sql import User  # pylint: disable=unused-import
+from application.models.analysis_sql import Analysis  # pylint: disable=unused-import  # noqa: F401
+from application.models.area_sql import Area  # pylint: disable=unused-import  # noqa: F401
+from application.models.iz_sql import Iz  # pylint: disable=unused-import  # noqa: F401
+from application.models.key_sql import Key  # pylint: disable=unused-import  # noqa: F401
+from application.models.recipient_sql import Recipient  # pylint: disable=unused-import  # noqa: F401
+from application.models.trigger_sql import Trigger  # pylint: disable=unused-import  # noqa: F401
+from application.models.user_sql import User  # pylint: disable=unused-import  # noqa: F401
 
 dotenv.load_dotenv()  # Load environment variables from .env file
 

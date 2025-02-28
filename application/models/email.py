@@ -37,8 +37,8 @@ class Email:
 
         :return: None
         """
-
-        basic = HTTPBasicAuth(get_config('webhook_user', session), get_config('webhook_pass', session))  # Create the basic auth object
+        # Create the basic auth object
+        basic = HTTPBasicAuth(get_config('webhook_user', session), get_config('webhook_pass', session))
 
         try:  # Try to send the email
             response = requests.post(  # Send the email

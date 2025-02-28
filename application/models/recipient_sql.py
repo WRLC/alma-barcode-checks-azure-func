@@ -16,8 +16,8 @@ class Recipient(Base):  # pylint: disable=too-few-public-methods
     user_id: Mapped[int] = mapped_column(ForeignKey("user.id"))  # User ID
     analysis_id: Mapped[int] = mapped_column(ForeignKey("analysis.id"))  # Analysis ID
 
-    user: Mapped["User"] = relationship(back_populates="recipients")  # type:ignore[name-defined]
-    analysis: Mapped["Analysis"] = relationship(back_populates="recipients")  # type:ignore[name-defined]
+    user: Mapped["User"] = relationship(back_populates="recipients")  # type:ignore[name-defined]  # noqa: F821
+    analysis: Mapped["Analysis"] = relationship(back_populates="recipients")  # type:ignore[name-defined]  # noqa: F821
 
     def __repr__(self) -> str:
         return f"Recipient(id={self.id!r})"
