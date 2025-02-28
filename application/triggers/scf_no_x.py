@@ -43,7 +43,7 @@ def main(scfnox: func.TimerRequest) -> None:  # type:ignore[unused-argument]  # 
         report = get_report(analysis, session)  # Get a report from the analysis
 
         if not check_exception(report):  # Check for empty or errors
-            logging.info('No results for report %s %s', analysis.iz.code, analysis.trigger.name)
+            logging.info('No results for report %s %s', analysis.iz.code, analysis.azuretrigger.name)
             continue
 
         # TODO: Fix Alma records

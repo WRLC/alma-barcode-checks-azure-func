@@ -6,17 +6,17 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from application.extensions import Base
 
 
-class Trigger(Base):  # pylint: disable=too-few-public-methods
+class Azuretrigger(Base):  # pylint: disable=too-few-public-methods
     """
     Trigger model
     """
-    __tablename__ = "trigger"
+    __tablename__ = "azuretrigger"
     id: Mapped[int] = mapped_column(primary_key=True)  # Trigger ID
     code: Mapped[str] = mapped_column(String(50))  # Trigger code
     name: Mapped[str] = mapped_column(String(255))  # Trigger name
 
     analyses: Mapped[list["Analysis"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
-        back_populates="trigger",
+        back_populates="azuretrigger",
         cascade="all, delete-orphan",
     )
 

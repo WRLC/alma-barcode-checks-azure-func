@@ -22,7 +22,7 @@ def get_config(key: str, session: scoped_session) -> str | None:
         return None
 
     # Get the region from the database
-    stmt = select(Config).where(Config.key == key)  # Select the region from the database
+    stmt = select(Config).where(Config.configkey == key)  # Select the region from the database
 
     try:
         config = session.scalars(stmt).one().value  # Execute the statement and get the result

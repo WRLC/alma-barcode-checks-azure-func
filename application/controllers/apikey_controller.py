@@ -6,7 +6,7 @@ import sqlalchemy.exc
 from sqlalchemy import select
 from sqlalchemy.orm import scoped_session
 from application.controllers.exception_controller import check_exception
-from application.models.key_sql import Key
+from application.models.apikey_sql import Apikey
 
 
 def get_key(iz: int, area: int, write: int, session: scoped_session) -> str | None:
@@ -17,14 +17,14 @@ def get_key(iz: int, area: int, write: int, session: scoped_session) -> str | No
         return None
 
     stmt = (  # Select the appropriate API key from the database
-        select(Key)
-        .where(Key.iz_id == iz)
-        .where(Key.area_id == area)
-        .where(Key.write == write)
+        select(Apikey)
+        .where(Apikey.iz_id == iz)
+        .where(Apikey.area_id == area)
+        .where(Apikey.writekey == write)
     )
 
     try:
-        apikey = session.scalars(stmt).one().key  # Execute the statement and get the result
+        apikey = session.scalars(stmt).one().apikey  # Execute the statement and get the result
 
     except sqlalchemy.exc.NoResultFound as e:  # Handle exceptions
         logging.error('No API key found: %s', e)  # log the error

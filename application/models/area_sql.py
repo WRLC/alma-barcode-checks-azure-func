@@ -15,8 +15,7 @@ class Area(Base):  # pylint: disable=too-few-public-methods
     id: Mapped[int] = mapped_column(primary_key=True)  # Area ID
     name: Mapped[str] = mapped_column(String(50))  # Area name
 
-    keys: Mapped[list["Key"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
-        "Key",
+    apikeys: Mapped[list["Apikey"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
         back_populates="area",
         cascade="all, delete-orphan",
     )

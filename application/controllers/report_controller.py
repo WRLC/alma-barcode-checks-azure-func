@@ -46,7 +46,7 @@ def get_report(analysis: Analysis, session: scoped_session) -> Report | None:
             'status': 'success',
             'message': 'Report data retrieved',
             'data': {
-                'report_name': analysis.iz.code.upper() + ' ' + analysis.trigger.name,
+                'report_name': analysis.iz.code.upper() + ' ' + analysis.azuretrigger.name,
                 'columns': columns,
                 'rows': rows
             }

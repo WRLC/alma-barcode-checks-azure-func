@@ -16,7 +16,7 @@ class Iz(Base):  # pylint: disable=too-few-public-methods
     name: Mapped[str] = mapped_column(String(50))  # IZ name
     code: Mapped[str] = mapped_column(String(50))  # IZ code
 
-    keys: Mapped[list["Key"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
+    apikeys: Mapped[list["Apikey"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
         back_populates="iz",
         cascade="all, delete-orphan",
     )

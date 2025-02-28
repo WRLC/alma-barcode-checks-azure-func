@@ -8,8 +8,8 @@ from sqlalchemy.orm import scoped_session
 from application.controllers.area_controller import get_area_by_name
 from application.controllers.config_controller import get_config
 from application.controllers.exception_controller import check_exception
-from application.controllers.key_controller import get_key
-from application.controllers.trigger_controller import get_trigger
+from application.controllers.apikey_controller import get_key
+from application.controllers.azuretrigger_controller import get_trigger
 from application.models.analysis_sql import Analysis
 
 
@@ -78,7 +78,7 @@ def get_analysis(analysis: Analysis, session: scoped_session) -> requests.Respon
         logging.error(e)
         return None
 
-    logging.info('API call succeeded: %s %s', analysis.iz.code, analysis.trigger.name)  # Log success
+    logging.info('API call succeeded: %s %s', analysis.iz.code, analysis.azuretrigger.name)  # Log success
 
     return response
 

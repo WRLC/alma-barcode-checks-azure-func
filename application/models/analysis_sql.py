@@ -14,10 +14,12 @@ class Analysis(Base):  # pylint: disable=too-few-public-methods
 
     id: Mapped[int] = mapped_column(primary_key=True)  # Analysis ID
     path: Mapped[str] = mapped_column(String(255))  # Path to the analysis
-    trigger_id: Mapped[int] = mapped_column(ForeignKey("trigger.id"))  # Trigger ID
+    azuretrigger_id: Mapped[int] = mapped_column(ForeignKey("azuretrigger.id"))  # Trigger ID
     iz_id: Mapped[int] = mapped_column(ForeignKey("iz.id"))  # IZ ID
 
-    trigger: Mapped["Trigger"] = relationship(back_populates="analyses")  # type:ignore[name-defined]  # noqa: F821
+    azuretrigger: Mapped["Azuretrigger"] = relationship(  # type:ignore[name-defined]  # noqa: F821
+        back_populates="analyses"
+    )
     iz: Mapped["Iz"] = relationship(back_populates="analyses")  # type:ignore[name-defined]  # noqa: F821
 
     recipients: Mapped[list["Recipient"]] = relationship(  # type:ignore[name-defined]  # noqa: F821
