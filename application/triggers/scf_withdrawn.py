@@ -1,5 +1,5 @@
 """
-Barcodes with no row/tray in SCF.
+Barcodes marked withdrawn in SCF.
 """
 import logging
 import azure.functions as func
@@ -21,7 +21,7 @@ app = func.Blueprint()  # Create a Blueprint object
 )
 def main(scfwithdrawn: func.TimerRequest) -> None:  # type:ignore  # pylint:disable=unused-argument
     """
-    Get report of barcodes with no row/tray in SCF and send email notification.
+    Get report of barcodes marked withdrawn in SCF and send email notification.
 
     :param scfwithdrawn: TimerRequest
     :return: None

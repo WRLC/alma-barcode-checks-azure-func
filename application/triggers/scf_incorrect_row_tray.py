@@ -29,7 +29,7 @@ def main(scfincorrectrowtray: func.TimerRequest) -> None:  # type:ignore  # pyli
     session_factory = sessionmaker(engine)  # Create a session factory
     session = scoped_session(session_factory)  # Create a session
 
-    code = 'scf_no_incorrect_tray'  # Trigger code
+    code = 'scf_incorrect_row_tray'  # Trigger code
 
     analyses = get_trigger_analyses(code, session)  # Get the trigger's analyses
 

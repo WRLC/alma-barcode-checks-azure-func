@@ -1,5 +1,5 @@
 """
-Barcodes with no row/tray in SCF.
+Barcodes with no row/tray in all IZs.
 """
 import logging
 import azure.functions as func
@@ -17,11 +17,11 @@ app = func.Blueprint()  # Create a Blueprint object
 @app.function_name(name="iznorowtray")
 @app.timer_trigger(
     schedule="0 0 12 1 * *",  # type:ignore[arg-type]
-    arg_name="scfnorowtray"
+    arg_name="iznorowtray"
 )
 def main(iznorowtray: func.TimerRequest) -> None:  # type:ignore  # pylint:disable=unused-argument
     """
-    Get report of barcodes with no row/tray in SCF and send email notification.
+    Get report of barcodes with no row/tray in all IZs and send email notification.
 
     :param iznorowtray: TimerRequest
     :return: None
@@ -46,6 +46,8 @@ def main(iznorowtray: func.TimerRequest) -> None:  # type:ignore  # pylint:disab
         if not check_exception(report):  # Check for empty or errors
             logging.info('No results for report %s %s', analysis.iz.code, analysis.trigger.name)
             continue
+
+        # TODO: Fix Alma records
 
         send_emails(report, analysis, session)  # type:ignore[arg-type]  # Send the report as email
 

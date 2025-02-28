@@ -47,7 +47,7 @@ def main(scfnox: func.TimerRequest) -> None:  # type:ignore[unused-argument]  # 
             logging.info('No results for report %s %s', analysis.iz.code, analysis.trigger.name)
             continue
 
-        # TODO: Fix records in Alma
+        # TODO: Fix Alma records
 
         send_emails(report, analysis, session)  # type:ignore[arg-type]  # Send the report as email
 
