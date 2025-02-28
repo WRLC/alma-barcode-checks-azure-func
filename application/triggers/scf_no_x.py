@@ -16,7 +16,7 @@ app = func.Blueprint()  # Create a Blueprint object
 # noinspection PyUnusedLocal
 @app.function_name(name="scfnox")
 @app.timer_trigger(
-    schedule="0 0 12 1 * *",  # type:ignore[arg-type]
+    schedule="0 30 12 1 * *",  # type:ignore[arg-type]  # Run at 12:30 on the first day of every month
     arg_name="scfnox"
 )
 def main(scfnox: func.TimerRequest) -> None:  # type:ignore[unused-argument]  # pylint: disable=unused-argument

@@ -16,7 +16,7 @@ app = func.Blueprint()  # Create a Blueprint object
 # noinspection PyUnusedLocal
 @app.function_name(name="scfincorrectrowtray")
 @app.timer_trigger(
-    schedule="0 0 12 1 * *",  # type:ignore[arg-type]
+    schedule="0 30 13 1 1,7 *",  # type:ignore[arg-type]  # Run at 13:30 on the first day of January and July
     arg_name="scfincorrectrowtray"
 )
 def main(scfincorrectrowtray: func.TimerRequest) -> None:  # type:ignore  # pylint:disable=unused-argument

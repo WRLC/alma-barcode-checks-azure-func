@@ -16,7 +16,7 @@ app = func.Blueprint()  # Create a Blueprint object
 # noinspection PyUnusedLocal
 @app.function_name(name="scfwithdrawn")
 @app.timer_trigger(
-    schedule="0 0 12 1 * *",  # type:ignore[arg-type]
+    schedule="0 0 11 1 7 *",  # type:ignore[arg-type]  # Run at 11:00 on the first day of July
     arg_name="scfwithdrawn"
 )
 def main(scfwithdrawn: func.TimerRequest) -> None:  # type:ignore  # pylint:disable=unused-argument
