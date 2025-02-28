@@ -2,11 +2,13 @@
 Duplicate barcodes in SCF
 """
 import logging
-
 import azure.functions as func
-from application.controllers.email_controller import construct_email
+from sqlalchemy.orm import sessionmaker, scoped_session
+from application.controllers.analysis_controller import get_trigger_analyses
+from application.controllers.email_controller import send_emails
 from application.controllers.exception_controller import check_exception
-from application.controllers.trigger_controller import get_trigger
+from application.controllers.report_controller import get_report
+from application.extensions import engine
 
 app = func.Blueprint()  # Create a Blueprint object
 
@@ -24,40 +26,28 @@ def main(scfduplicate: func.TimerRequest) -> None:  # type:ignore[unused-argumen
     :param scfduplicate: TimerRequest
     :return: None
     """
-    trigger = get_trigger('scf_duplicate')  # Get the trigger
+    session_factory = sessionmaker(engine)  # Create a session factory
+    session = scoped_session(session_factory)  # Create a session
 
-    if not check_exception(trigger) or isinstance(trigger, Exception):  # Check for empty or errors
-        logging.warning("Trigger is empty or has an error")  # Log a warning
-        return  # Skip the trigger if there is an error
+    code = 'scf_duplicate'  # Trigger code
 
-    analyses = trigger.analyses  # Get the trigger's analyses
+    analyses = get_trigger_analyses(code, session)  # Get the trigger's analyses
 
-    if not check_exception(analyses) or isinstance(analyses, Exception):  # Check for empty or errors
-        logging.warning("Analyses are empty or have an error")  # Log a warning
-        return  # Skip the trigger if there is an error
+    if not check_exception(analyses):  # Check for empty or errors
+        session.remove()
+        return
 
-    for analysis in analyses:  # Iterate through the trigger's analyses
+    for analysis in analyses:  # type:ignore[union-attr]  # Iterate through the analyses
 
-        if not check_exception(analysis) or isinstance(analysis, Exception):  # Check for empty or errors
-            logging.warning("Analysis is empty or has an error")  # Log a warning
-            continue  # Skip the analysis if there is an error
+        if not check_exception(analysis):  # Check for empty values
+            continue
 
-        email = construct_email(analysis)  # Construct the email
+        report = get_report(analysis, session)  # Get a report from the analysis
 
-        if not check_exception(email) or isinstance(email, Exception):  # Check for empty or errors
-            logging.warning("Email is empty or has an error")  # Log a warning
-            continue  # Skip the email if there is an error
+        if not check_exception(report):  # Check for empty or errors
+            logging.info('No results for report %s %s', analysis.iz.code, analysis.trigger.name)
+            continue
 
-        recipients = analysis.recipients  # Get the analysis's recipients
+        send_emails(report, analysis, session)  # type:ignore[arg-type]  # Send the report as email
 
-        if not check_exception(recipients) or isinstance(recipients, Exception):  # Check for empty or errors
-            logging.warning("Recipients are empty or have an error")
-            continue  # Skip the recipients if there is an error
-
-        for recipient in recipients:  # Iterate through the analysis's recipients
-
-            if not check_exception(recipient) or isinstance(recipient, Exception):  # Check for empty or errors
-                logging.warning("Recipient is empty or has an error")
-                continue  # Skip the recipient if there is an error
-
-            email.send(recipient.user.email)  # type:ignore[union-attr]  # Send email to recipient
+    session.remove()

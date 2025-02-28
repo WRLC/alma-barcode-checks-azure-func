@@ -3,22 +3,18 @@ Controllers for key model.
 """
 import logging
 import sqlalchemy.exc
-
 from sqlalchemy import select
-from sqlalchemy.orm import Session
-from application.extensions import engine
+from sqlalchemy.orm import scoped_session
+from application.controllers.exception_controller import check_exception
 from application.models.key_sql import Key
 
 
-def get_key(iz: int, area: int, write: int) -> str | Exception | None:
+def get_key(iz: int, area: int, write: int, session: scoped_session) -> str | None:
     """
     Get the API key to retrieve the report
     """
-    if not iz or not area:  # Check for empty values
-        logging.error('Missing API key parameters')
+    if not check_exception(iz) or not check_exception(area):  # Check for empty values
         return None
-
-    session = Session(engine)  # Create a Session object
 
     stmt = (  # Select the appropriate API key from the database
         select(Key)
@@ -32,7 +28,7 @@ def get_key(iz: int, area: int, write: int) -> str | Exception | None:
 
     except sqlalchemy.exc.NoResultFound as e:  # Handle exceptions
         logging.error('No API key found: %s', e)  # log the error
-        return e  # return the error
+        return None
 
     logging.debug('API key retrieved')  # Log success
 

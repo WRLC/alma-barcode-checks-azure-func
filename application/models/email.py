@@ -4,6 +4,7 @@ Email model
 import logging
 import requests  # type: ignore[import-untyped]
 from requests.auth import HTTPBasicAuth  # type:ignore[import-untyped]
+from sqlalchemy.orm import scoped_session
 from application.controllers.config_controller import get_config
 
 
@@ -30,23 +31,23 @@ class Email:
         """
         return f"Subject: {self.subject}\n\n{self.body}"
 
-    def send(self, to: str) -> None:
+    def send(self, to: str, session: scoped_session) -> None:
         """
         Send the email to webhook
 
         :return: None
         """
 
-        basic = HTTPBasicAuth(get_config('webhook_user'), get_config('webhook_pass'))  # Create the basic auth object
+        basic = HTTPBasicAuth(get_config('webhook_user', session), get_config('webhook_pass', session))  # Create the basic auth object
 
         try:  # Try to send the email
             response = requests.post(  # Send the email
-                url=get_config('webhook_url'),
+                url=get_config('webhook_url', session),
                 json={
                     "subject": self.subject,
                     "body": self.body,
                     "to": to,
-                    "sender": get_config('sender_email')
+                    "sender": get_config('sender_email', session)
                 },
                 timeout=10,
                 auth=basic

@@ -1,9 +1,14 @@
 """
 Barcodes with No X in SCF
 """
+import logging
 import azure.functions as func
-from application.controllers.trigger_controller import get_trigger
-from application.controllers.email_controller import construct_email
+from sqlalchemy.orm import sessionmaker, scoped_session
+from application.controllers.analysis_controller import get_trigger_analyses
+from application.controllers.email_controller import send_emails
+from application.controllers.exception_controller import check_exception
+from application.controllers.report_controller import get_report
+from application.extensions import engine
 
 app = func.Blueprint()  # Create a Blueprint object
 
@@ -21,12 +26,29 @@ def main(scfnox: func.TimerRequest) -> None:  # type:ignore[unused-argument]  # 
     :param scfnox: TimerRequest
     :return: None
     """
-    for analysis in get_trigger('scf_no_x').analyses:  # Iterate through the trigger's analyses
+    session_factory = sessionmaker(engine)
+    session = scoped_session(session_factory)
 
-        email = construct_email(analysis)  # Construct the email
+    code = 'scf_no_x'  # Trigger code
 
-        # TODO: Fix records in Alma  # pylint:disable=fixme
+    analyses = get_trigger_analyses(code, session)  # Get the trigger's analyses
 
-        for recipient in analysis.recipients:  # Iterate through the analysis's recipients
+    if not check_exception(analyses):  # Check for empty or errors
+        return
 
-            email.send(recipient.user.email)  # Send email to recipient
+    for analysis in analyses:  # type:ignore[union-attr]  # Iterate through the analyses
+
+        if not check_exception(analysis):  # Check for empty values
+            continue
+
+        report = get_report(analysis, session)  # Get a report from the analysis
+
+        if not check_exception(report):  # Check for empty or errors
+            logging.info('No results for report %s %s', analysis.iz.code, analysis.trigger.name)
+            continue
+
+        # TODO: Fix records in Alma
+
+        send_emails(report, analysis, session)  # type:ignore[arg-type]  # Send the report as email
+
+    session.remove()

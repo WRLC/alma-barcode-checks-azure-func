@@ -4,17 +4,16 @@ Controller for handling exceptions
 import logging
 
 
-def check_exception(value: object) -> bool | Exception | None:
+def check_exception(value: object) -> bool:
     """
     Return the exception value
     :param value: object
     :return: Exception or None
     """
-    if not value:  # Check for empty values
-        return None
+    if not value or isinstance(value, Exception):  # Check for errors
+        if isinstance(value, Exception):
+            logging.error('Error: %s', value)  # Log the error
 
-    if isinstance(value, Exception):  # Check for errors
-        logging.error('Error: %s', value)
-        return value
+        return False
 
     return True

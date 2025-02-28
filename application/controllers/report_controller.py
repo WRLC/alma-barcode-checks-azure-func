@@ -3,36 +3,43 @@ Controllers for the report model.
 """
 import logging
 from bs4 import BeautifulSoup  # type:ignore[import-untyped]
-from application.controllers.analysis_controller import analysis_api_call
+from sqlalchemy.orm import scoped_session
+
+from application.controllers.analysis_controller import get_analysis
 from application.controllers.exception_controller import check_exception
 from application.models.analysis_sql import Analysis
 from application.models.report import Report
 
 
 # pylint: disable=r0914
-def get_report(analysis: Analysis) -> Report | bool | Exception | None:
+def get_report(analysis: Analysis, session: scoped_session) -> Report | None:
     """
     Get the report from Alma Analytics
 
     :param analysis: Analysis
+    :param session: Session object
     :return: requests.Response or None
     """
-    response = analysis_api_call(analysis)  # Create an API call object and execute it
+    if not check_exception(analysis):  # Check for empty or errors
+        return None
 
-    if not check_exception(response) or isinstance(check_exception(response), Exception):  # Check for empty or errors
-        return check_exception(response)  # Return the error or None
+    # Get the data from Alma Analytics
+    response = get_analysis(analysis, session)
+
+    if not check_exception(response):  # Check for empty or errors
+        return None
 
     soup = get_soup(response)  # Parse the XML response
 
-    if not check_exception(soup) or isinstance(check_exception(soup), Exception):  # Check for empty or errors
-        return check_exception(soup)  # Return the error or None
+    if not check_exception(soup):  # Check for empty or errors
+        return None
 
     columns = get_columns(soup)  # Get the columns from the XML response
     rows = get_rows(soup)  # Get the rows from the XML response
 
     for i in [columns, rows]:  # Iterate through the columns and rows
-        if not check_exception(i) or isinstance(check_exception(i), Exception):  # Check for empty or errors
-            return check_exception(i)  # Return the error or None
+        if not check_exception(i):  # Check for empty or errors
+            return None
 
     report = Report(  # Create the report object
         data={
@@ -51,38 +58,44 @@ def get_report(analysis: Analysis) -> Report | bool | Exception | None:
     return report  # Return the report
 
 
-def get_soup(response) -> BeautifulSoup | Exception | None:
+def get_soup(response) -> BeautifulSoup | None:
     """
     Parse the XML response
 
     :param response: requests.Response
     :return: BeautifulSoup
     """
+    if not check_exception(response):  # Check for empty or errors
+        return None
+
     soup = BeautifulSoup(response.content, 'xml')  # Parse the XML response
 
-    if not check_exception(soup) or isinstance(check_exception(soup), Exception):  # Check for empty or errors
-        return check_exception(soup)  # Return the error or None
+    if not check_exception(soup):  # Check for empty or errors
+        return None  # Return the error or None
 
     if soup.find('error'):  # Check for Alma errors
         logging.error('Error: %s', soup.find('error').text)
-        return ValueError(soup.find('error').text)
+        return None
 
     logging.debug('XML response parsed')  # Log the success message
 
     return soup
 
 
-def get_columns(soup: BeautifulSoup) -> dict[str, str] | bool | Exception | None:  # type:ignore[valid-type]
+def get_columns(soup: BeautifulSoup) -> dict[str, str] | None:  # type:ignore[valid-type]
     """
     Get the data rows from the report
 
     :param soup: BeautifulSoup
     :return: list or None
     """
+    if not check_exception(soup):  # Check for empty or errors
+        return None
+
     columnlist = soup.find_all('xsd:element')  # Get the columns from the XML response
 
-    if not check_exception(columnlist) or isinstance(check_exception(columnlist), Exception):
-        return check_exception(columnlist)
+    if not check_exception(columnlist):
+        return None
 
     columns = {}  # Create a dictionary of columns
 
@@ -97,17 +110,20 @@ def get_columns(soup: BeautifulSoup) -> dict[str, str] | bool | Exception | None
     return columns  # Return the dictionary of columns
 
 
-def get_rows(soup: BeautifulSoup) -> list | bool | Exception | None:  # type:ignore[valid-type]
+def get_rows(soup: BeautifulSoup) -> list | None:  # type:ignore[valid-type]
     """
     Get the data rows from the report
 
     :param soup: BeautifulSoup
     :return: list or None
     """
+    if not check_exception(soup):  # Check for empty or errors
+        return None
+
     rowlist = soup.find_all('Row')  # Get the rows from the XML response
 
-    if not check_exception(rowlist) or isinstance(check_exception(rowlist), Exception):
-        return check_exception(rowlist)
+    if not check_exception(rowlist):
+        return None
 
     rows = []  # Create a list of rows
 
