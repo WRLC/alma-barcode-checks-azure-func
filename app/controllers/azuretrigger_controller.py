@@ -5,7 +5,7 @@ import logging
 import sqlalchemy.exc
 from sqlalchemy import select
 from sqlalchemy.orm import scoped_session
-from application.models.azuretrigger_sql import Azuretrigger
+from app.models.azuretrigger_sql import Azuretrigger
 
 
 def get_trigger(code: str, session: scoped_session) -> Azuretrigger | None:

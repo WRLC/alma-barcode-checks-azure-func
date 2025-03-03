@@ -4,10 +4,10 @@ Controller for the Email model
 import logging
 from jinja2 import Environment, FileSystemLoader, select_autoescape
 from sqlalchemy.orm import scoped_session
-from application.controllers.exception_controller import check_exception
-from application.models.analysis_sql import Analysis
-from application.models.email import Email
-from application.models.report import Report
+from app.controllers.exception_controller import check_exception
+from app.models.analysis_sql import Analysis
+from app.models.email import Email
+from app.models.report import Report
 
 
 def send_emails(report: Report, analysis: Analysis, session: scoped_session) -> None:
@@ -83,7 +83,7 @@ def render_template(template, **kwargs) -> str:
     :return: str
     """
     env = Environment(  # create the environment
-        loader=FileSystemLoader('application/templates'),  # load the templates from the templates directory
+        loader=FileSystemLoader('app/templates'),  # load the templates from the templates directory
         autoescape=select_autoescape(['html', 'xml'])  # autoescape html and xml
     )
 

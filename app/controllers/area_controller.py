@@ -5,7 +5,7 @@ import logging
 import sqlalchemy.exc
 from sqlalchemy import select
 from sqlalchemy.orm import scoped_session
-from application.models.area_sql import Area
+from app.models.area_sql import Area
 
 
 def get_area_by_name(name: str, session: scoped_session) -> Area | None:

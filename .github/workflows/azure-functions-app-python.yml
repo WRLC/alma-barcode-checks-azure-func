@@ -1,6 +1,6 @@
-# This workflow will build a Python application and deploy it to an Azure Functions App on Linux when a commit is pushed to your default branch.
+# This workflow will build a Python app and deploy it to an Azure Functions App on Linux when a commit is pushed to your default branch.
 #
-# This workflow assumes you have already created the target Azure Functions application.
+# This workflow assumes you have already created the target Azure Functions app.
 # For instructions see https://learn.microsoft.com/en-us/azure/azure-functions/create-first-function-vs-code-python?pivots=python-mode-configuration
 #
 # To configure this workflow:
@@ -23,8 +23,8 @@ on:
     branches: ["main"]
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'almabarcodechecks'   # set this to your function application name on Azure
-  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # set this to the path to your function application project, defaults to the repository root
+  AZURE_FUNCTIONAPP_NAME: 'almabarcodechecks'   # set this to your function app name on Azure
+  AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # set this to the path to your function app project, defaults to the repository root
   PYTHON_VERSION: '3.11'                     # set this to the python version to use (e.g. '3.6', '3.7', '3.8')
 
 jobs:

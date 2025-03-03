@@ -3,7 +3,7 @@ Recipient Model
 """
 from sqlalchemy import ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
-from application.extensions import Base
+from app.extensions import Base
 
 
 class Recipient(Base):  # pylint: disable=too-few-public-methods

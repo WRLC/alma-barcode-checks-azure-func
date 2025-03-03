@@ -6,7 +6,7 @@ import logging
 import sqlalchemy.exc
 from sqlalchemy import select
 from sqlalchemy.orm import scoped_session
-from application.models.config_sql import Config
+from app.models.config_sql import Config
 
 
 def get_config(key: str, session: scoped_session) -> str | None:

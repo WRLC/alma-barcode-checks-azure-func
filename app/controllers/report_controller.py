@@ -5,10 +5,10 @@ import logging
 from bs4 import BeautifulSoup  # type:ignore[import-untyped]
 from sqlalchemy.orm import scoped_session
 
-from application.controllers.analysis_controller import get_analysis
-from application.controllers.exception_controller import check_exception
-from application.models.analysis_sql import Analysis
-from application.models.report import Report
+from app.controllers.analysis_controller import get_analysis
+from app.controllers.exception_controller import check_exception
+from app.models.analysis_sql import Analysis
+from app.models.report import Report
 
 
 # pylint: disable=r0914

@@ -3,7 +3,7 @@ User model
 """
 from sqlalchemy import String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from application.extensions import Base
+from app.extensions import Base
 
 
 class User(Base):  # pylint: disable=too-few-public-methods

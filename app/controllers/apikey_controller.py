@@ -5,8 +5,8 @@ import logging
 import sqlalchemy.exc
 from sqlalchemy import select
 from sqlalchemy.orm import scoped_session
-from application.controllers.exception_controller import check_exception
-from application.models.apikey_sql import Apikey
+from app.controllers.exception_controller import check_exception
+from app.models.apikey_sql import Apikey
 
 
 def get_key(iz: int, area: int, write: int, session: scoped_session) -> str | None:

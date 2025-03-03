@@ -4,11 +4,11 @@ Duplicate barcodes in SCF
 import logging
 import azure.functions as func
 from sqlalchemy.orm import scoped_session
-from application.controllers.analysis_controller import get_trigger_analyses
-from application.controllers.email_controller import send_emails
-from application.controllers.exception_controller import check_exception
-from application.controllers.report_controller import get_report
-from application.extensions import session_factory
+from app.controllers.analysis_controller import get_trigger_analyses
+from app.controllers.email_controller import send_emails
+from app.controllers.exception_controller import check_exception
+from app.controllers.report_controller import get_report
+from app.extensions import session_factory
 
 app = func.Blueprint()  # Create a Blueprint object
 
