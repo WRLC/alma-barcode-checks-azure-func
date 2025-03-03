@@ -1,34 +1,34 @@
 """
-Barcodes marked withdrawn in SCF.
+Barcodes with no row/tray in all IZs.
 """
 import logging
 import azure.functions as func
 from sqlalchemy.orm import scoped_session
-from application.controllers.analysis_controller import get_trigger_analyses
-from application.controllers.email_controller import send_emails
-from application.controllers.exception_controller import check_exception
-from application.controllers.report_controller import get_report
-from application.extensions import session_factory
+from app.controllers.analysis_controller import get_trigger_analyses
+from app.controllers.email_controller import send_emails
+from app.controllers.exception_controller import check_exception
+from app.controllers.report_controller import get_report
+from app.extensions import session_factory
 
 app = func.Blueprint()  # Create a Blueprint object
 
 
 # noinspection PyUnusedLocal
-@app.function_name(name="scfwithdrawn")
+@app.function_name(name="iznorowtray")
 @app.timer_trigger(
-    schedule="0 0 11 1 7 *",  # type:ignore[arg-type]  # Run at 11:00 on the first day of July
-    arg_name="scfwithdrawn"
+    schedule="0 0 14 1 * *",  # type:ignore[arg-type]  # Run at 14:00 on the first day of every month
+    arg_name="iznorowtray"
 )
-def main(scfwithdrawn: func.TimerRequest) -> None:  # type:ignore  # pylint:disable=unused-argument
+def main(iznorowtray: func.TimerRequest) -> None:  # type:ignore  # pylint:disable=unused-argument
     """
-    Get report of barcodes marked withdrawn in SCF and send email notification.
+    Get report of barcodes with no row/tray in all IZs and send email notification.
 
-    :param scfwithdrawn: TimerRequest
+    :param iznorowtray: TimerRequest
     :return: None
     """
     session = scoped_session(session_factory)  # Create a session
 
-    code = 'scf_withdrawn'  # Trigger code
+    code = 'iz_no_row_tray'  # Trigger code
 
     analyses = get_trigger_analyses(code, session)  # Get the trigger's analyses
 
@@ -46,7 +46,7 @@ def main(scfwithdrawn: func.TimerRequest) -> None:  # type:ignore  # pylint:disa
             logging.info('No results for report %s %s', analysis.iz.code, analysis.azuretrigger.name)
             continue
 
-        # TODO: Separate emails for each Provenance Code
+        # TODO: Fix Alma records
 
         send_emails(report, analysis, session)  # type:ignore[arg-type]  # Send the report as email
 

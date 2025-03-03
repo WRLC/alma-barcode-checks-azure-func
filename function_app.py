@@ -3,25 +3,25 @@ This file is used to register the function apps with the Azure Functions host.
 """
 import dotenv
 import azure.functions as func
-from application.extensions import engine, Base
+from app.extensions import engine, Base
 
 # import triggers
-from application import scf_duplicate
-from application import scf_no_x
-from application import scf_no_row_tray
-from application import scf_incorrect_row_tray
-from application import scf_withdrawn
-from application import iz_no_row_tray
-from application import iz_incorrect_row_tray
+from app import scf_duplicate
+from app import scf_no_x
+from app import scf_no_row_tray
+from app import scf_incorrect_row_tray
+from app import scf_withdrawn
+from app import iz_no_row_tray
+from app import iz_incorrect_row_tray
 
 # import db models
-from application.models.analysis_sql import Analysis  # pylint: disable=unused-import  # noqa: F401
-from application.models.area_sql import Area  # pylint: disable=unused-import  # noqa: F401
-from application.models.iz_sql import Iz  # pylint: disable=unused-import  # noqa: F401
-from application.models.apikey_sql import Apikey  # pylint: disable=unused-import  # noqa: F401
-from application.models.recipient_sql import Recipient  # pylint: disable=unused-import  # noqa: F401
-from application.models.azuretrigger_sql import Azuretrigger  # pylint: disable=unused-import  # noqa: F401
-from application.models.user_sql import User  # pylint: disable=unused-import  # noqa: F401
+from app.models.analysis_sql import Analysis  # pylint: disable=unused-import  # noqa: F401
+from app.models.area_sql import Area  # pylint: disable=unused-import  # noqa: F401
+from app.models.iz_sql import Iz  # pylint: disable=unused-import  # noqa: F401
+from app.models.apikey_sql import Apikey  # pylint: disable=unused-import  # noqa: F401
+from app.models.recipient_sql import Recipient  # pylint: disable=unused-import  # noqa: F401
+from app.models.azuretrigger_sql import Azuretrigger  # pylint: disable=unused-import  # noqa: F401
+from app.models.user_sql import User  # pylint: disable=unused-import  # noqa: F401
 
 dotenv.load_dotenv()  # Load environment variables from .env file
 

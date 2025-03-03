@@ -1,5 +1,5 @@
 """
-Object Relational Mapping (ORM) models for the application.
+Object Relational Mapping (ORM) models for the app.
 """
 import os
 import dotenv

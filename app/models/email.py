@@ -5,7 +5,7 @@ import logging
 import requests  # type: ignore[import-untyped]
 from requests.auth import HTTPBasicAuth  # type:ignore[import-untyped]
 from sqlalchemy.orm import scoped_session
-from application.controllers.config_controller import get_config
+from app.controllers.config_controller import get_config
 
 
 class Email:

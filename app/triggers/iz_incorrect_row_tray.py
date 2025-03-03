@@ -1,34 +1,34 @@
 """
-Barcodes with incorrect row/tray in SCF
+Barcodes with incorrect row/tray in all IZs
 """
 import logging
 import azure.functions as func
 from sqlalchemy.orm import scoped_session
-from application.controllers.analysis_controller import get_trigger_analyses
-from application.controllers.email_controller import send_emails
-from application.controllers.exception_controller import check_exception
-from application.controllers.report_controller import get_report
-from application.extensions import session_factory
+from app.controllers.analysis_controller import get_trigger_analyses
+from app.controllers.email_controller import send_emails
+from app.controllers.exception_controller import check_exception
+from app.controllers.report_controller import get_report
+from app.extensions import session_factory
 
 app = func.Blueprint()  # Create a Blueprint object
 
 
 # noinspection PyUnusedLocal
-@app.function_name(name="scfincorrectrowtray")
+@app.function_name(name="izincorrectrowtray")
 @app.timer_trigger(
-    schedule="0 30 13 1 1,7 *",  # type:ignore[arg-type]  # Run at 13:30 on the first day of January and July
-    arg_name="scfincorrectrowtray"
+    schedule="0 30 14 1 * *",  # type:ignore[arg-type]  # Run at 14:30 on the first day of every month
+    arg_name="izincorrectrowtray"
 )
-def main(scfincorrectrowtray: func.TimerRequest) -> None:  # type:ignore  # pylint:disable=unused-argument
+def main(izincorrectrowtray: func.TimerRequest) -> None:  # type:ignore  # pylint:disable=unused-argument
     """
-    Get report of barcodes with incorrect row/tray in SCF and send email notification.
+    Get report of barcodes with incorrect row/tray in all IZs and send email notification.
 
-    :param scfincorrectrowtray: TimerRequest
+    :param izincorrectrowtray: TimerRequest
     :return: None
     """
     session = scoped_session(session_factory)  # Create a session
 
-    code = 'scf_incorrect_row_tray'  # Trigger code
+    code = 'iz_incorrect_row_tray'  # Trigger code
 
     analyses = get_trigger_analyses(code, session)  # Get the trigger's analyses
 

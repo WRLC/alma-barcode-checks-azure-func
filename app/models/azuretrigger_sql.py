@@ -3,7 +3,7 @@ Trigger model
 """
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from application.extensions import Base
+from app.extensions import Base
 
 
 class Azuretrigger(Base):  # pylint: disable=too-few-public-methods

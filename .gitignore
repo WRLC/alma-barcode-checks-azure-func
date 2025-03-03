@@ -4,8 +4,9 @@ csx
 .vs
 edge
 Publish
-.vscode
+
 .idea
+.vscode
 
 *.user
 *.suo

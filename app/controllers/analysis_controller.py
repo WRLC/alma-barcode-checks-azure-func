@@ -5,12 +5,12 @@ import logging
 import urllib.parse
 import requests  # type:ignore[import-untyped]
 from sqlalchemy.orm import scoped_session
-from application.controllers.area_controller import get_area_by_name
-from application.controllers.config_controller import get_config
-from application.controllers.exception_controller import check_exception
-from application.controllers.apikey_controller import get_key
-from application.controllers.azuretrigger_controller import get_trigger
-from application.models.analysis_sql import Analysis
+from app.controllers.area_controller import get_area_by_name
+from app.controllers.config_controller import get_config
+from app.controllers.exception_controller import check_exception
+from app.controllers.apikey_controller import get_key
+from app.controllers.azuretrigger_controller import get_trigger
+from app.models.analysis_sql import Analysis
 
 
 # noinspection PyTypeChecker

@@ -3,7 +3,7 @@ Config model
 """
 from sqlalchemy import String
 from sqlalchemy.orm import Mapped, mapped_column
-from application.extensions import Base
+from app.extensions import Base
 
 
 class Config(Base):  # pylint: disable=too-few-public-methods
