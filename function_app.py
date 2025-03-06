@@ -281,7 +281,7 @@ class Report:  # pylint: disable=too-few-public-methods
 ############
 
 
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyUnresolvedReferences
 @app.function_name(name="izincorrectrowtray")
 @app.timer_trigger(
     schedule="0 30 14 1 * *",  # type:ignore[arg-type]  # Run at 14:30 on the first day of every month
@@ -320,7 +320,7 @@ def iz_incorrect_row_tray(izincorrectrowtray: func.TimerRequest) -> None:  # typ
     session.remove()  # Remove the session
 
 
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyUnresolvedReferences
 @app.function_name(name="iznorowtray")
 @app.timer_trigger(
     schedule="0 0 14 1 * *",  # type:ignore[arg-type]  # Run at 14:00 on the first day of every month
@@ -360,7 +360,7 @@ def iz_no_row_tray(iznorowtray: func.TimerRequest) -> None:  # type:ignore  # py
     session.remove()  # Remove the session
 
 
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyUnresolvedReferences
 @app.function_name(name="scfduplicate")
 @app.timer_trigger(
     schedule="0 0 12 1 * *",  # type:ignore[arg-type]  # Run at 12:00 on the first day of every month
@@ -400,7 +400,7 @@ def scf_duplicate(scfduplicate: func.TimerRequest) -> None:  # type:ignore[unuse
     session.remove()  # Remove the session
 
 
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyUnresolvedReferences
 @app.function_name(name="scfincorrectrowtray")
 @app.timer_trigger(
     schedule="0 30 13 1 1,7 *",  # type:ignore[arg-type]  # Run at 13:30 on the first day of January and July
@@ -439,7 +439,7 @@ def scf_incorrect_row_tray(scfincorrectrowtray: func.TimerRequest) -> None:  # t
     session.remove()  # Remove the session
 
 
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyUnresolvedReferences
 @app.function_name(name="scfnorowtray")
 @app.timer_trigger(
     schedule="0 0 13 1 1,7 *",  # type:ignore[arg-type]  # Run at 13:00 on the first day of January and July
@@ -477,7 +477,7 @@ def scf_no_row_tray(scfnorowtray: func.TimerRequest) -> None:  # type:ignore  # 
     session.remove()  # Remove the session
 
 
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyUnresolvedReferences
 @app.function_name(name="scfnox")
 @app.timer_trigger(
     schedule="0 30 12 1 * *",  # type:ignore[arg-type]  # Run at 12:30 on the first day of every month
@@ -517,7 +517,7 @@ def scf_no_x(scfnox: func.TimerRequest) -> None:  # type:ignore[unused-argument]
     session.remove()  # Remove the session
 
 
-# noinspection PyUnusedLocal
+# noinspection PyUnusedLocal,PyUnresolvedReferences
 @app.function_name(name="scfwithdrawn")
 @app.timer_trigger(
     schedule="0 0 11 1 7 *",  # type:ignore[arg-type]  # Run at 11:00 on the first day of July
@@ -877,8 +877,8 @@ def get_report(analysis: Analysis, session: scoped_session) -> Report | None:
     if not check_exception(soup):  # Check for empty or errors
         return None
 
-    columns = get_columns(soup)  # Get the columns from the XML response
-    rows = get_rows(soup)  # Get the rows from the XML response
+    columns = get_columns(soup)  # type: ignore # Get the columns from the XML response
+    rows = get_rows(soup)  # type: ignore # Get the rows from the XML response
 
     for i in [columns, rows]:  # Iterate through the columns and rows
         if not check_exception(i):  # Check for empty or errors
@@ -917,7 +917,7 @@ def get_soup(response) -> BeautifulSoup | None:
         return None  # Return the error or None
 
     if soup.find('error'):  # Check for Alma errors
-        logging.error('Error: %s', soup.find('error').text)
+        logging.error('Error: %s', soup.find('error').text)  # type: ignore
         return None
 
     logging.debug('XML response parsed')  # Log the success message
@@ -943,14 +943,14 @@ def get_columns(soup: BeautifulSoup) -> dict[str, str] | None:  # type:ignore[va
     columns = {}  # Create a dictionary of columns
 
     for column in columnlist:  # Iterate through the columns
-        columns[column['name']] = column['saw-sql:columnHeading']  # Add column to dictionary
+        columns[column['name']] = column['saw-sql:columnHeading']  # type: ignore # Add column to dictionary
 
-        if 'CASE  WHEN Provenance Code' in columns[column['name']]:  # If column is Provenance Code
-            columns[column['name']] = 'Provenance Code'  # Change column name to Provenance Code
+        if 'CASE  WHEN Provenance Code' in columns[column['name']]:  # type: ignore # If column is Provenance Code
+            columns[column['name']] = 'Provenance Code'  # type: ignore # Change column name to Provenance Code
 
     logging.debug('Columns retrieved')  # Log the success message
 
-    return columns  # Return the dictionary of columns
+    return columns  # type: ignore # Return the dictionary of columns
 
 
 def get_rows(soup: BeautifulSoup) -> list | None:  # type:ignore[valid-type]
@@ -972,7 +972,7 @@ def get_rows(soup: BeautifulSoup) -> list | None:  # type:ignore[valid-type]
 
     for value in rowlist:  # Iterate through the rows
         values = {}  # Create a dictionary of values
-        kids = value.findChildren()  # Get the children of the row
+        kids = value.findChildren()  # type: ignore # Get the children of the row
 
         for kid in kids:  # Iterate through the children
             values[kid.name] = kid.text  # Add the child to the dictionary
