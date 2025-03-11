@@ -230,7 +230,7 @@ def send_emails(report: Report, analysis: Analysis, session: scoped_session) -> 
         if not check_exception(recipient):  # Check for empty or errors
             return
 
-        email.send(recipient.user.email, session)  # type:ignore[union-attr]  # Send email to recipient
+        send_email(email, recipient.user.email, session)  # type:ignore[arg-type]  # Send email to recipient
 
 
 def construct_email(report: Report) -> Email | None:
@@ -435,7 +435,7 @@ def get_rows(soup: BeautifulSoup) -> list | None:  # type:ignore[valid-type]
     return rows  # Return the list of rows
 
 
-def send(email: Email, to: str, session: scoped_session) -> None:
+def send_email(email: Email, to: str, session: scoped_session) -> None:
     """
             Send the email to webhook
 
