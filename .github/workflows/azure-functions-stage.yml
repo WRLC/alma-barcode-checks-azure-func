@@ -1,3 +1,4 @@
+#file: noinspection UndefinedAction,UndefinedParamsPresent
 # This workflow will build a Python app and deploy it to an Azure Functions App on Linux when a commit is pushed to your default branch.
 #
 # This workflow assumes you have already created the target Azure Functions app.
@@ -16,11 +17,11 @@
 #
 # For more samples to get started with GitHub Action workflows to deploy to Azure: https://github.com/Azure/actions-workflow-samples/tree/master/FunctionApp
 
-name: Deploy Python project to Azure Function App
+name: Deploy to Azure Function App (prod)
 
 on:
   push:
-    branches: ["main"]
+    branches: ["stage"]
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'almabarcodechecks'   # set this to your function app name on Azure
@@ -30,7 +31,7 @@ env:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
-    environment: prod
+    environment: stage
     steps:
     - name: 'Checkout GitHub Action'
       uses: actions/checkout@v4
